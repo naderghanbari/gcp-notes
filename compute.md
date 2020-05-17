@@ -2,7 +2,7 @@
 
 Predefined or custom virtual machines.
 
-## [Series](https://cloud.google.com/compute/docs/machine-types#machine_type_comparison) 
+## [Series](https://cloud.google.com/compute/docs/machine-types#machine_type_comparison)
 
 | Series | Purpose                     | Architecture                 | Max memory |
 | ------ | --------------------------- | ---------------------------- | ---------- |
@@ -11,14 +11,15 @@ Predefined or custom virtual machines.
 | `E2`   | Lowest total cost           | Any available!               | `128 GB`   |
 | `C2`   | High-end vCPU               | Intel Cascade Lake           | `240 GB`   |
 | `M2`   | Memory-optimized            | Intel Skylake & predecessors | `12 TB`    |
-| `M1`   | First geb of `M2`           | Intel Skylake & predecessors | `3.5 TB`   |
+| `M1`   | First gen of `M2`           | Intel Skylake & predecessors | `3.5 TB`   |
 | `N1`   | First gen of `N2`           | Intel Skylake & predecessors | `624 GB`   |
 
-* `1 GB` = [`1 GiB`](https://en.wikipedia.org/wiki/Gibibyte) = `1024 MB` 
+* `1 GB` = [`1 GiB`](https://en.wikipedia.org/wiki/Gibibyte) = `1024 MB`
 
 ## Key Features
 
 * **Live migration** between physical hosts while running!
+  - Default behavior during maintenance window of physical nodes or hosts 
 * **Per-second** billing!
 * **Sustained and Committed savings**
   - Discounts for sustained use up to 57%
@@ -35,8 +36,13 @@ Predefined or custom virtual machines.
   - Add or remove at any time to save cost
 * Grouping and global load-balancing
 * Recommendation engine
-  - Recommends resizing for optimum cost!
-* Placement policy 
+  - Recommends resizing or deleting for optimum cost!
+  - Detects a VM as idle if (in the past 14 days)
+    - `< 0.03 vCPU` used `97%` of time
+    - `< 2000 B/s` ingress for `95%` of time
+    - `< 1000 B/s` egress for `95%` of time
+  - Monitoring-aware (if monitoring agent is installed its metrics will be used)     
+* Placement policy
   - Pose constraints on where and what hardware you want your VMs to run
 * **Shielded VMs**
   - vTPM to detect tampering for high-security purposes
@@ -45,6 +51,8 @@ Predefined or custom virtual machines.
 * Virtual Displays
 * Virtual NIC (new generation created by Google)
   - Up to `50 - 100 Gbps` speed now!
+* Deletion Protection
+  - Can be turned on irrespective of the state of the VM (stopped, running)    
 
 ## Custom Machine Types
 * Different pricing
@@ -59,7 +67,7 @@ Predefined or custom virtual machines.
 * For `N2` machine types (only select zones):
   - `[2, 96] vCPU` (Cascade Lake series)
     - Having only `1` vCPU not allowed
-    - `#vCPU > 32` -> `vCPU mod 4 MUST be 0` 
+    - `#vCPU > 32` -> `vCPU mod 4 MUST be 0`
   - `[0.5, 8.0] GB` per vCPU
     - for higher amounts -> `extended memory`       
 * For `N2D` machine types (only select zones):
@@ -72,7 +80,6 @@ Predefined or custom virtual machines.
   - `[0.5, 8.0] GB` per vCPU
 * Shared-Core machines
   - `N1` or `E2`
-   
 
 ## Creating a VM
 * Naming convention similar to domain names [RFC 1035](https://www.ietf.org/rfc/rfc1035.txt)
@@ -80,12 +87,12 @@ Predefined or custom virtual machines.
 * From custom images
 * Right away from a docker image (docker hub)
 * MBR (up to `2 TiB` only)
-      
+
 ## Preemptible VMs
 * Always get terminated after `24h`
 * May get terminated earlier
 * Much cheaper than normal VMs
-* No SLA! 
+* No SLA!
   - Use with caution
   - Use only for fault-tolerant use cases.
   - Make sure state is external to VMs and jobs can be resumed after incarnation
@@ -101,9 +108,9 @@ Predefined or custom virtual machines.
 * Node group
   - How many sole-tenant nodes and in what zone
   - Minimum of two at least required
-    - Default vCPU quota of `72` is not enough for two nodes (`192` vCPUs) 
+    - Default vCPU quota of `72` is not enough for two nodes (`192` vCPUs)
   - Autoscaling (_beta_)
-  
+
 ## Disks
 * Boot Disks
   - Can now be detached and re-attache to/from a stopped VM
@@ -143,7 +150,7 @@ Predefined or custom virtual machines.
   - External or internal IP needed for activation
   - Route to `kms.windows.googlecloud.com` with `next-hop=default-internet-gateway`
 * May be showing as running but `sysprep` still in progress
-  - Probe to see readiness: 
+  - Probe to see readiness:
     - `gcloud compute instances get-serial-port-output [INSTANCE_NAME]`
 * Automatic Google-provided components with auto update
 * Password set/reset via `gcloud` and Console
@@ -156,7 +163,7 @@ Predefined or custom virtual machines.
 
 ## Virtual Network Interface gVNIC (_beta_)
 * Google-made virtual network interface and driver
-* Faster than the standard current [virtIO](http://docs.oasis-open.org/virtio/virtio/v1.0/virtio-v1.0.html)-based driver 
+* Faster than the standard current [virtIO](http://docs.oasis-open.org/virtio/virtio/v1.0/virtio-v1.0.html)-based driver
 * Support for `50 - 100 Gbps`
 
 ## Connecting to VMs
@@ -170,7 +177,7 @@ Predefined or custom virtual machines.
 * To move files use `gcloud compute scp` or from the Console in the browser
 * OS Login
   - Use IAM roles to grant/revoke ssh access
-  
+
 ## Serial Port
 * Useful for troubleshooting (4 virtual ports per instance)
 * Can be connected to Stackdriver logs for longer retention   
@@ -181,7 +188,7 @@ Predefined or custom virtual machines.
 - `TERMINATED` (pay only for static IPs and attached persistent disks)
 - Stopping sends ACPI Power Off signal -> graceful shutdown (metadata is maintained)
 - Resetting is like a hard reset, VM remains in `RUNNING` (non-graceful)
-- Deleting removes the instance forever, but keeps persistent disks 
+- Deleting removes the instance forever, but keeps persistent disks
   - Unless Iif persistent disks have `auto-delete = true`
   - Static IPs return to the project pool for reuse
 - MAC address is based on internal IP, to reuse the same MAC address use the same internal IP
@@ -190,4 +197,19 @@ after deleting an instance
 ## Network Bandwidth
 - Accounted for at VM level. Number of IPs or vNICs don't make a difference. It's the cloud after all!
 - Internal IP ingress is unlimited (still limited by resources and physics of course!)
-- 
+- External IP ingress has a limit per VM: `1,800,000 packets/s` or `20Gb/s`
+
+## Service Accounts
+- VMs by default use the default service account
+  - This default account has `project/editor` role!! To add IAM roles to it you must revoke
+  `project/editor` role from it (this role is there for legacy reasons)
+- Add new service accounts and use them at creation time or stop the VM and assign the account
+- Both `gsutil` and `gcloud` on VMs are aware of service account and will work out of the box
+
+## Metadata Server
+- Accessible from within the VM with no authorization required or from Compute Engine API
+- A simple key/value store.
+
+## Placement Policy
+- Spread: up to 8 instances per policy (does not support E2, sole-tenant and reserved)
+- Compact: up to 22 instances per policy (support only C2 non-sole-tenant non-reserved)
