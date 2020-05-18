@@ -12,6 +12,13 @@
 * VPC Networks (individual subnets are regional)
 * Firewalls
 * Routes
+* Dataproc Clusters (can be global or regional but a zone is still needed)
+
+## Multi-Regional Resources (Large Geographic Areas)
+* Datasets
+  - US (all data centers in US)
+  - EU (only data centers within the 27 member states)
+    - Excludes London and Zürich regions 
 
 ## Regional Resources
 * Addresses (regional static IP addresses)
@@ -19,6 +26,7 @@
 * Subnets of VPC networks
 * Regional instance groups
 * Regional persistent disks
+* Datasets (as of now supports only select regions)
 
 ## Zonal Resources
 * VM instances
