@@ -1,5 +1,8 @@
 ## A separation
 
+## GCP Free Tier
+- One year `$300` free trial with access to most resources
+- Free tier after that with limited access to many services 
 
 ## Hassle-Control Spectrum
 * Serverless, Fully Managed Service, PaaS, IaaS, YAOYW
@@ -8,6 +11,7 @@
   - Dataproc, based on Hadoop and Spark ecosystems
   - CloudSQL, based on MySQL, Postgres, and SQL Server (proprietary) 
   - Cloud Composer, based on Apache Airflow
+  - Cloud Dataflow, based on Apache Beam
 
 ## SLA, SLI, SLO
 
@@ -138,11 +142,12 @@
   - Follows the ANSI standard 
 
 ## Cloud Dataflow
-* Serverless fully managed data processing solution
-* Unified programming model for `batch` jobs and `streaming` jobs
-* Based on Apache Beam programming model
+* Serverless data processing solution
+* Unified programming model for `batch` and `streaming` jobs
+  - Based on Apache Beam pipelines
 * Preexisting templates (Pub/Sub to BigQuery, etc.)
 * Auto scaling to millions of QPS
+* First choice for creating new pipelines or transformations
 
 ## Data Studio
 * Visualizations
@@ -202,7 +207,7 @@
 * Schedulable batch pipelines
 
 ## Cloud Composer
-* Managed Apache Airflow as a service
+* Managed Apache Airflow as a service backed by GKE
 * Workflow orchestration
 * Creates interactive Airflow environments
   - DAGs are Python files
@@ -212,4 +217,3 @@
   - Periodic (Pull-based)
   - Event-driven (Push-based)
 
-  
