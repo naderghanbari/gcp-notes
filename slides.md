@@ -148,7 +148,12 @@
 * Preexisting templates (Pub/Sub to BigQuery, etc.)
 * Auto scaling to millions of QPS
 * First choice for creating new pipelines or transformations
-
+* Apache Beam provides an abstract way of defining data pipelines
+  - How to run a pipeline is left as an exercise to the reader
+    - Just kidding; The actual runners or backends will run the pipeline
+    - Google is the maintainer of Dataflow runner for Apache Beam
+  - Has a concept of `PCollection` which is very similar to Spark's `RDD`s   
+  
 ## Data Studio
 * Visualizations
 * Based on Google Drive (reports live in or are presented in Drive?)
