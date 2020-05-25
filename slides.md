@@ -37,6 +37,8 @@
   - Cloud Composer, based on Apache Airflow
   - Cloud Dataflow, based on Apache Beam
   - GKE, based on Kubernetes
+  - AI Platform, based on Kubeflow and Tensorflow
+  - AI Platform Notebooks, based on Jupyter notebooks, Python, R, and Tensorflow
 * etc
   - Compute Engine, support for running Docker images
   - Bigtable, inspiration behind Apache Cassandra (along with Amazon's Dynamo) and HBase
@@ -46,7 +48,11 @@
 - One year `$300` free trial with access to most resources
 - Free tier after that with limited access to many services 
 
-## SLA, SLI, SLO
+## Hybrid Topologies
+* Mirrored (disaster recovery)
+* Gated ingress (on-prem -> some cloud services)
+* Gated egress  (cloud -> some on-prem services)
+* Mesh () 
 
 ## Quotas
 - Per project
@@ -158,6 +164,17 @@
 * Native support for `GIS`
   - Big Query Geo Viz (viz dashboard for GIS)
 * Big Query ML: create and train ML models with SQL!
+  - Various model types including deep neural networks (DNNs)
+    - Regression models (Linear, `XBOOST`, DNN regressors)
+    - Classification models (`XBOOST`, DNN, Logistic regression)
+    - Clustering (`kmeans`)
+    - Recommendation algorithms: Matrix factorization
+  - Full cycle in SQL (train, evaluate, predict) without having to deploy the model elsewhere
+  - Can load a pre-trained Tensorflow model! 
+  - `TRANSFORM` clause
+    - Remembers the massage and transformation applied to training data
+    - Leads to simpler models (applies the same transformations to test or real data)
+
 * Federated queries
   - Query from external sources such as GCS in various formats (Parquet, CSV, Avro, Apache orc, JSON)
     - Data lives external and only metadata is needed to recognize the data as a legit table
@@ -232,6 +249,40 @@ LIMIT 100;
 ## Auto ML
 * Offers supervised ML without writing code
 * Labeling service to make labeling easier and faster
+* Pre-trained models
+* Custom models
+  - Trained on a prepared dataset (CSV with naming conventions)
+    - First column: `TRAIN`, `VALIDATION` or `TEST`
+      - Leave empty for `80-10-10` split
+    - Must be clean (no duplicate, no empty rows, etc.)
+  - Compressed ZIP file allowed    
+  - Analysis phase before training to determine readiness and sufficiency of data
+* All custom models are temporary!
+  - They get deleted automatically after a while
+  - You have to create new models periodically to keep them alive?
+* REST API for prediction
+  - JSON response with classification and `score` (confidence in `[0, 1]` range)
+
+### Auto ML Vision
+* Various file formats (up to `30MB` in size)
+* Ingested as `BASE64` text or zip files
+* Remove low frequency labels
+* Most frequent label should have about `100x` images compared to the least frequent one
+
+### Auto ML NLP
+* Data can be inline text or a reference to a doc in GCS
+* Unicode is not supported at the moment! 
+* 6 months max lifetime for a trained model
+  - Re-train to keep it alive and benefit from recent improvements
+
+### Auto ML Table
+* ML for structured tabular data
+* Collaboration with the Google Deep Mind team
+* Data importable through BigQuery or CSV (GCS)
+* Data must have 
+  - `n` in the range `[10^3, 10^8]` (number of samples or rows)
+  - `p` in the range `[2, 80]` (number of features) 
+  - Total `size` below `100 GB`
 
 ## Cloud Dataproc
 * Fully managed Hadoop + Spark ecosystem 
@@ -370,3 +421,32 @@ LIMIT 100;
     - `gcloud bigtable clusters create $CUSTER_ID --instance=$INSTANCE_ID --zone=$ZONE`
   - Can be used for segregation of reads and writes
   - Provides near-real-time backup 
+
+## Cloud AI Platform
+* Serverless service for custom ML models
+  - Full spectrum: from training to production
+  - Host and auto-scale models for predictions
+  - Supports Kubeflow
+  - Integrated with Cloud TPU (Google's Tensor processing unit hardware)
+
+## Kubeflow
+* ML end-to-end workflows run on Kubernetes
+  - Uses Kubernetes custom resource definitions (CDRs) so pipelines are first class K8S citizens
+* Visual pipelines similar to Cloud Composer 
+* Exportable pipelines (can be run in other Cloud environments or Kubeflow providers)
+    
+## AI Platform Notebooks
+* IaaS for Jupyter notebooks
+  - Provisions a GCE VM with the latest version of JupyterLab and ML libraries
+  - Save a bit of time by doing up all necessary steps to get a notebook running in under 30 seconds 
+* Built-in Jupyter directive (magic) for BigQuery queries
+  - Query BigQuery and transform the result set to a Pandas dataframe  
+
+## AI Hub
+* Hub for ML pipelines (similar to Docker Hub but for ML assets)
+  - Fine grained access to assets (public/private)
+
+## Cloud Shell
+* Pre-provisioned ephemeral VM for doing quick and dirty jobs
+  - Can act as a temporary entry point or bastion host
+  - Can be boosted for 24 hours (a more beefy machine)
